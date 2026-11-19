@@ -32,7 +32,7 @@ function App() {
         ...current, { 
           role: "assistant", 
           text: answer,
-          source: data.sources ?? [],
+          sources: data.sources ?? [],
          },        
       ])
     } catch (error) {

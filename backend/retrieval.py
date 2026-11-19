@@ -10,14 +10,14 @@ def load_chunks():
     for path in sorted(DATA_DIR.glob("*.txt")):
         text = path.read_text(encoding="utf-8")
         # 다음 슬라이드 코드를 이 아래에 이어 씁니다.
-    # 빈 줄을 기준으로 문단을 나눕니다.
-    for paragraph in text.split("\n\n"):
-        paragraph = paragraph.strip()
-        if paragraph:  # 비어 있지 않은 문단만 저장
-            chunks.append({
-                "source": path.name,  # 원본 파일명
-                "text": paragraph,    # 문단 내용
-            })
+        # 빈 줄을 기준으로 문단을 나눕니다.
+        for paragraph in text.split("\n\n"):
+            paragraph = paragraph.strip()
+            if paragraph:  # 비어 있지 않은 문단만 저장
+                chunks.append({
+                    "source": path.name,  # 원본 파일명
+                    "text": paragraph,    # 문단 내용
+                })
     return chunks  # 모든 파일의 문단 목록
 
 # 사용자정의 함수 추가

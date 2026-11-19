@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from google import genai
 from pydantic import BaseModel, Field
 
-from retieval import find_chunks
+from retrieval import find_chunks
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR.parent / ".env")
@@ -47,7 +47,7 @@ def chat(request: ChatRequest):
     )
     sources = []
     for chunk in chunks:
-        name = chunk["sources"]
+        name = chunk["soruce"]
         if name not in sources:
             sources.append(name)
     return {"answer": interaction.output_text, "sources": sources}

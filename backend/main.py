@@ -47,7 +47,7 @@ def chat(request: ChatRequest):
     )
     sources = []
     for chunk in chunks:
-        name = chunk["soruce"]
+        name = chunk["source"]
         if name not in sources:
             sources.append(name)
     return {"answer": interaction.output_text, "sources": sources}

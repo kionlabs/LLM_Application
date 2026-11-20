@@ -126,10 +126,11 @@ button:disabled { opacity: .5; cursor: default; }
   .composer { grid-row: 4; }
 }
 /* 회원가입·로그인 입력 폼 */
-.auth-panel { width: min(560px, 100%); margin: 2rem auto; padding: 2rem; border: 1px solid #c6d7e1; border-radius: 16px; }
-.auth-panel input { display: block; width: 100%; padding: 0.75rem; margin: 0.5rem 0 1rem; border: 1px solid #a8bfce; border-radius: 8px; font: inherit; }
-.auth-actions { display: flex; gap: 0.8rem; margin-top: 0.6rem; }
-.auth-actions button { flex: 1; }
+.auth-panel { width: min(560px, 100%); margin: 1rem auto; padding: 1.5rem; border: 1px solid #c6d7e1; border-radius: 16px; }
+.auth-panel h2 { margin: 0 0 1rem; }
+.auth-panel input { display: block; width: 100%; padding: 0.75rem; margin: 0.35rem 0 0.75rem; border: 1px solid #a8bfce; border-radius: 8px; font: inherit; }
+.auth-actions { display: flex; gap: 0.8rem; }
+.auth-actions button { flex: 1; min-height: 42px; }
 
 /* 채팅 목록과 문서 목록은 같은 왼쪽 열에 배치합니다. */
 .left-panel { grid-column: 1; grid-row: 2 / 4; min-width: 0; }

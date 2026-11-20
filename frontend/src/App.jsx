@@ -139,7 +139,7 @@ function App() {
   }
 
   return (
-    <main className="app">
+    <main className={approved ? 'app' : 'app auth-page'}>
       <header className="header">
         <span className="eyebrow">KION LABS · LLM 애플리케이션 개발</span>
         <h1>나의 문서 질문 챗봇</h1>

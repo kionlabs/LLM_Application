@@ -1,20 +1,23 @@
-"""기존 질문 API에 문서 목록과 TXT 업로드 API를 더한 완성 예시."""
+"""기존 FastAPI 앱의 Supabase 연결 완성 예시."""
 
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, Header, HTTPException, UploadFile
 from google import genai
 from pydantic import BaseModel, Field
-
-from document_store import add_document, list_documents
-from retrieval import find_chunks
 
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR.parent / ".env")
+
+from retrieval import find_chunks  # noqa: E402
+from supabase_store import add_document, all_document_texts, list_documents  # noqa: E402
+from auth_guard import require_approved  # noqa: E402
+
+
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
-MAX_FILE_SIZE = 1_000_000  # 수업에서는 TXT 파일을 1 MB까지만 받습니다.
+MAX_FILE_SIZE = 1_000_000
 
 
 class ChatRequest(BaseModel):
@@ -22,19 +25,20 @@ class ChatRequest(BaseModel):
 
 
 @app.get("/api/documents")
-def get_documents():
-    # 브라우저 왼쪽 목록에는 문서 내용 대신 이름과 ID만 보냅니다.
-    return {"documents": list_documents()}
+def get_documents(authorization: str = Header(default="")):
+    token, user_id = require_approved(authorization)
+    return {"documents": list_documents(token)}
 
 
 @app.post("/api/documents")
-def upload_document(file: UploadFile):
-    # 브라우저가 보낸 파일명에서 폴더 경로를 제거합니다.
+def upload_document(file: UploadFile, authorization: str = Header(default="")):
+    token, user_id = require_approved(authorization)
     filename = (file.filename or "").replace("\\", "/").split("/")[-1]
     if not filename.lower().endswith(".txt"):
         raise HTTPException(status_code=400, detail="TXT 파일만 올릴 수 있습니다.")
+    if len(filename) > 200:
+        raise HTTPException(status_code=400, detail="파일명이 너무 깁니다.")
 
-    # 크기를 제한하고 UTF-8 텍스트인지 확인합니다.
     data = file.file.read(MAX_FILE_SIZE + 1)
     if len(data) > MAX_FILE_SIZE:
         raise HTTPException(status_code=400, detail="파일은 1 MB 이하여야 합니다.")
@@ -45,21 +49,18 @@ def upload_document(file: UploadFile):
     if not content.strip():
         raise HTTPException(status_code=400, detail="내용이 비어 있습니다.")
 
-    document_id = add_document(filename, content)
-    if document_id is None:
-        raise HTTPException(status_code=409, detail="같은 이름의 문서가 있습니다.")
-    return {"id": document_id, "filename": filename}
+    document = add_document(token, user_id, filename, content)
+    return {"id": document["id"], "filename": document["filename"]}
 
 
 @app.post("/api/chat")
-def chat(request: ChatRequest,
-         authorization: str = Header(default="")):
+def chat(request: ChatRequest, authorization: str = Header(default="")):
     token, user_id = require_approved(authorization)
+    # RLS가 허용한 현재 사용자의 문서만 가져옵니다.
     documents = all_document_texts(token)
     chunks = find_chunks(request.question, documents)
-
     if not chunks:
-        return {"answer": "자료에서 관련 내용을 찾지 못했습니다.", "sources": []}
+        return {"answer": "내 문서에서 관련 내용을 찾지 못했습니다.", "sources": []}
 
     context = ""
     for chunk in chunks:
@@ -82,3 +83,4 @@ def chat(request: ChatRequest,
         if name not in sources:
             sources.append(name)
     return {"answer": interaction.output_text, "sources": sources}
+

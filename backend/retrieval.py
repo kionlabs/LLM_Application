@@ -1,12 +1,9 @@
-"""SQLite의 문서를 문단으로 나누고 질문과 겹치는 단어를 찾습니다."""
-
-from document_store import all_document_texts
+"""Supabase가 허용한 현재 사용자의 문서에서 문단을 검색합니다."""
 
 
-def load_chunks():
+def load_chunks(documents):
     chunks = []
-    for document in all_document_texts():
-        # TXT 한 개의 내용을 빈 줄 기준으로 나눕니다.
+    for document in documents:
         for paragraph in document["content"].split("\n\n"):
             paragraph = paragraph.strip()
             if paragraph:
@@ -23,11 +20,10 @@ def make_words(text):
     return cleaned.split()
 
 
-def find_chunks(question):
+def find_chunks(question, documents):
     question_words = make_words(question)
     found = []
-
-    for chunk in load_chunks():
+    for chunk in load_chunks(documents):
         content_words = make_words(chunk["text"])
         for word in question_words:
             if len(word) > 1 and word in content_words:
@@ -36,3 +32,4 @@ def find_chunks(question):
         if len(found) == 3:
             break
     return found
+

@@ -93,6 +93,7 @@ function App() {
   }
 
   async function signIn() {
+    setNotice('') // 이전 계정의 로그아웃 안내를 지웁니다.
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) setNotice(error.message)
   }

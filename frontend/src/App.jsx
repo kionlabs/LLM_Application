@@ -101,7 +101,7 @@ function App() {
   async function signOut() {
     await supabase.auth.signOut()
     sessionStorage.removeItem('activeChatId')
-    setNotice('로그아웃했습니다.')
+    setNotice('')
   }
 
   async function send(event) {
@@ -151,7 +151,7 @@ function App() {
           )}
         </div>
         <h1>나의 문서 질문 챗봇</h1>
-        <p>로그인한 사용자의 문서와 대화를 저장합니다.</p>
+        {session && <p>로그인한 사용자의 문서와 대화를 저장합니다.</p>}
         
         <p role="status">{notice}</p>
       </header>

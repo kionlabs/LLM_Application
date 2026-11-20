@@ -141,3 +141,4 @@ button:disabled { opacity: .5; cursor: default; }
   .chat { grid-column: 1; grid-row: 3; }
   .composer { grid-column: 1; grid-row: 4; }
 }
+

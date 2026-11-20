@@ -41,15 +41,7 @@ function App() {
   async function apiRequest(path, options = {}, currentSession = session) {
     const headers = { Authorization: 'Bearer ' + currentSession.access_token }
     if (options.body) headers['Content-Type'] = 'application/json'
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + session.access_token,
-      },
-      body: JSON.stringify({ question: trimmed }),
-    })
-    // const response = await fetch(path, { ...options, headers })
+    const response = await fetch(path, { ...options, headers })
     const data = await response.json()
     if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`)
     return data
@@ -226,3 +218,4 @@ function App() {
 }
 
 export default App
+

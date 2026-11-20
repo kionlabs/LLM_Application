@@ -149,3 +149,16 @@ button:disabled { opacity: .5; cursor: default; }
   .composer { grid-column: 1; grid-row: 4; }
 }
 
+/* 로그아웃 버튼*/
+.header-top{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.logout-button {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 16px;
+}
